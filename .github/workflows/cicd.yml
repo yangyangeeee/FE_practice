@@ -1,3 +1,53 @@
+# name: CI/CD Deploy
+
+# on:
+#   push:
+#     branches: [main]
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout source
+#         uses: actions/Checkout@v3
+
+#       - name: Setup Node.jobs
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: "18"
+
+#       - name: Install dependencies
+#         run: npm ci
+
+#       - name: Set enviornment variables
+#         run: |
+#           echo "VITE_ID=${{ secrets.VITE_ID }}" >> .env
+#           echo "VITE_PW=${{ secrets.VITE_PW }}" >> .env
+
+#       - name: Build project
+#         run: npm run build
+
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v2
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-rigion: ap-northeast-2
+
+#       - name: Deploy to S3
+#         run: aws s3 sync ./build s3://${{ secrets.S3_BUCKET_NAME }} --delate
+
+#       - name: CloudFront Invalidation Cache
+#         run: |
+#           aws cloudfront create-invalidation \
+#           --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+#           --paths "/*"
+#         env:
+#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           AWS_REGION: ap-northeast-2
+
 name: CI/CD Deploy
 
 on:
@@ -10,9 +60,9 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/Checkout@v3
+        uses: actions/checkout@v3
 
-      - name: Setup Node.jobs
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "18"
@@ -20,7 +70,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Set enviornment variables
+      - name: Set environment variables
         run: |
           echo "VITE_ID=${{ secrets.VITE_ID }}" >> .env
           echo "VITE_PW=${{ secrets.VITE_PW }}" >> .env
@@ -33,12 +83,12 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-rigion: ap-northeast-2
+          aws-region: ap-northeast-2
 
       - name: Deploy to S3
-        run: aws s3 sync ./build s3://${{ secrets.S3_BUCKET_NAME }} --delate
+        run: aws s3 sync ./build s3://${{ secrets.S3_BUCKET_NAME }} --delete
 
-      - name: CloudFront Invalidation Cache
+      - name: CloudFront Invalidate Cache
         run: |
           aws cloudfront create-invalidation \
           --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
