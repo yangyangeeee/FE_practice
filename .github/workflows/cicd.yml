@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/Checkout@@v3
+        uses: actions/Checkout@v3
 
       - name: Setup Node.jobs
         uses: actions/setup-node@v3
